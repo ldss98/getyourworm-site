@@ -1,0 +1,331 @@
+/* === Global Styles === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+body {
+  background-color: #ffb6c1; /* light pink */
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', Arial, sans-serif;
+  color: #333;
+}
+
+/* === Header === */
+header {
+  background-color: #ffb6c1; /* hot pink */
+  color: #fff;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: white;
+  background-color: transparent;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+  background-color: white;
+  color: #ff69b4;
+}
+
+/* === Logo Link === */
+.nav-logo {
+  text-decoration: none;
+  color: white;
+  background-color: transparent;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-logo:hover {
+  background-color: white;
+  color: #ff69b4;
+}
+
+/* === Landing Page === */
+.homepage {
+  background-color: #ffb6c1;
+  color: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.homepage-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 20px;
+}
+
+.homepage-hero h1 {
+  font-size: 3.5rem;
+  max-width: 800px;
+  margin: 0;
+  color: white;
+}
+
+.homepage-cta-button {
+  background-color: white;
+  color: #ff69b4;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.homepage-cta-button:hover {
+  background-color: #ffe4ec;
+  animation: vibrate 0.3s linear;
+}
+
+.homepage-cta-button:active {
+  animation: vibrate 0.3s linear;
+}
+
+/* === Tools Page === */
+.tools-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  padding: 60px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 90vw;     
+}
+
+.tool-box {
+  background-color: white;
+  color: #ff69b4;
+  font-weight: bold;
+  font-size: 1.5rem;
+  padding: 40px 20px;
+  text-align: center;
+  border-radius: 20px;
+  text-decoration: none;
+  box-shadow: 0 6px 12px rgba(255, 105, 180, 0.4);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.tool-box:hover {
+  background-color: #ffe4ec;
+  animation: vibrate 0.5s linear;
+}
+
+.tool-box:active {
+  animation: vibrate 0.5s linear;
+}
+
+/* === Vibration Animation (used by both buttons and toolboxes) === */
+@keyframes vibrate {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+/* Student Loan Page */
+.student-input-aggregate {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 40px auto;
+  height: auto; /* Override the fixed height */
+  justify-content: space-between;
+  background-color: #fff0f5; /* soft pink background */
+  box-shadow: 0 8px 16px rgba(255, 105, 180, 0.3);
+  border-radius: 20px;
+  color: #333;
+}
+
+
+.box {
+  flex: 1 1 400px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.input-field label {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #ff69b4;
+}
+
+.input-field input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.input-field input:focus {
+  border-color: #ff69b4;
+  outline: none;
+}
+
+.final-answer {
+  font-size: 1.8rem;
+  font-weight: bold;
+  background-color: #fff5fa;
+  color: #d63384;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.calculate-button {
+  background: linear-gradient(135deg, #ff69b4, #ff85c1);
+  color: white;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.calculate-button:hover {
+  background: linear-gradient(135deg, #ff94c9, #ffc0db);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(255, 105, 180, 0.4);
+}
+
+.calculate-button:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(255, 105, 180, 0.2);
+}
+
+/* About page */
+
+.about-container {
+  max-width: 800px;
+  margin: 60px auto;
+  padding: 0.2rem;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  background-color: white;
+  color: #333;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(255, 105, 180, 0.2);
+}
+
+.about-hero {
+  padding: 3rem 3rem 3rem 3rem;
+}
+
+.about-hero h2 {
+  color: #ff69b4;
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.about-hero p {
+  margin-bottom: 2rem;
+}
+
+.about-appendix {
+  padding: 2rem;
+  border-top: 1px solid #ffe4ec;
+  background-color: #fff5fa;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.about-appendix h3 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #d63384;
+  margin-bottom: 0.5rem;
+}
+
+.about-appendix p {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+/* === Terms Page === */
+.terms-container {
+  max-width: 800px;
+  margin: 60px auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(255, 105, 180, 0.2);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.terms-container h2 {
+  font-size: 2rem;
+  color: #ff69b4;
+  margin-bottom: 1rem;
+}
+
+.terms-container h3 {
+  font-size: 1.25rem;
+  color: #d63384;
+  margin-top: 2rem;
+}
+
+.terms-container p {
+  margin-bottom: 1rem;
+}

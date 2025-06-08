@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GetTheWorm / Pension Calculator</title>
+  <link rel="stylesheet" href="Style.CSS" />
+</head>
+<body>
+  <header>
+    <h1><a href="Tools.html" class="nav-logo">GetYourWorm</a></h1>
+    <nav>
+      <ul>
+        <li><a href="Tools.html">Tools</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Terms.html">Terms</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="student-input-aggregate">
+    <!-- Input Section -->
+    <div class="box">
+      <div class="input-field">
+        <label for="age">Your Age</label>
+        <input type="number" id="age" placeholder="e.g. 30" />
+      </div>
+      <div class="input-field">
+        <label for="salary">Current Take-Home Pay (£)</label>
+        <input type="number" id="salary" placeholder="e.g. 32000" />
+      </div>
+      <div class="input-field">
+        <label for="salary-increase">Assumed Annual Salary Increase (%)</label>
+        <input type="number" id="salary-increase" placeholder="e.g. 3" />
+      </div>
+      <div class="input-field">
+        <label for="roi">Assumed Annual ROI on Investments (%)</label>
+        <input type="number" step="0.1" id="roi" placeholder="e.g. 5.5" />
+      </div>
+      <div class="input-field">
+        <label for="retirement-age">Desired Retirement Age</label>
+        <input type="number" id="retirement-age" placeholder="e.g. 68" />
+      </div>
+      <div class="input-field">
+        <label for="contribution-rate">% of Salary Contributed to Pension</label>
+        <input type="number" step="0.1" id="contribution-rate" placeholder="e.g. 10" />
+      </div>
+      <div class="input-field">
+        <label for="current-pension">Current Pension Pot (£)</label>
+        <input type="number" id="current-pension" placeholder="e.g. 15000" />
+      </div>
+      <button class="calculate-button">Calculate</button>
+    </div>
+
+    <!-- Output Section -->
+    <div class="box">
+      <div class="final-answer" id="final-answer-text">
+        <p></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelector('.calculate-button').addEventListener('click', function () {
+      const age = parseInt(document.getElementById('age').value) || 0;
+      const salaryInput = parseFloat(document.getElementById('salary').value) || 0;
+      const salaryGrowthRate = parseFloat(document.getElementById('salary-increase').value) / 100 || 0;
+      const roi = parseFloat(document.getElementById('roi').value) / 100 || 0;
+      const retirementAge = parseInt(document.getElementById('retirement-age').value) || 0;
+      const contributionRate = parseFloat(document.getElementById('contribution-rate').value) / 100 || 0;
+      let pension = parseFloat(document.getElementById('current-pension').value) || 0;
+
+      if (age <= 0 || retirementAge <= age || salaryInput <= 0 || contributionRate <= 0 || roi < 0) {
+        alert("Please enter valid and realistic numbers for all fields.");
+        return;
+      }
+
+      let yearsToContribute = retirementAge - age;
+      let salary = salaryInput;
+
+      for (let i = 0; i < yearsToContribute; i++) {
+        const annualContribution = salary * contributionRate;
+        pension = (pension + annualContribution) * (1 + roi);
+        salary = salary * (1 + salaryGrowthRate);
+      }
+
+      // Retirement income (simple annuity until age 100)
+      const retirementYears = 100 - retirementAge;
+      const annualIncome = pension / retirementYears;
+
+      document.getElementById('final-answer-text').innerHTML = `
+        <p>By age ${retirementAge}, your pension pot could be worth 
+        <strong>£${pension.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>.<br><br>
+        If you live until age 100, this gives you around 
+        <strong>£${annualIncome.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong> 
+        per year in retirement.</p>
+      `;
+    });
+  </script>
+</body>
+</html>
+
