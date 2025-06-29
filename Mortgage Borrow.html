@@ -1,30 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>GetYourWorm / Coming Soon</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GetYourWorm / Mortgage Estimator</title>
   <link rel="apple-touch-icon" sizes="180x180" href="Assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
-<link rel="manifest" href="Assets/site.webmanifest">
-
-<link rel="stylesheet" href="Style.CSS" />
+  <link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
+  <link rel="manifest" href="Assets/site.webmanifest">
+  <link rel="stylesheet" href="Style.CSS" />
 </head>
 <body>
-<header>
-  <h1><a href="Tools.html" class="nav-logo">GetYourWorm</a></h1>
-  <nav>
-    <ul>
-      <li><a href="Tools.html">Tools</a></li>
-      <li><a href="About.html">About</a></li>
-      <li><a href="Terms.html">Terms</a></li>
-    </ul>
-  </nav>
-</header>
+  <header>
+    <h1><a href="Tools.html" class="nav-logo">GetYourWorm</a></h1>
+    <nav>
+      <ul>
+        <li><a href="Tools.html">Tools</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Terms.html">Terms</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<main class="container" style="text-align:center; padding: 150px 20px; font-size: 2rem; font-weight: 700;">
-  Under construction—mind the glitter and sawdust!
-</main>
+  <main>
+    <section class="student-input-aggregate">
+      <div class="box">
+        <div class="input-field">
+          <label for="applicants">Number of People Applying</label>
+          <input type="number" id="applicants" placeholder="e.g., 1 or 2" min="1" />
+        </div>
+
+        <div class="input-field">
+          <label for="combined-salary">Combined Annual Salary (£)</label>
+          <input type="number" id="combined-salary" placeholder="e.g., 50000" />
+        </div>
+
+        <div class="input-field">
+          <label for="deposit">Combined Deposit (£)</label>
+          <input type="number" id="deposit" placeholder="e.g., 20000" />
+        </div>
+
+        <button class="calculate-button">Estimate Mortgage</button>
+      </div>
+
+      <div class="box">
+        <div class="final-answer" id="mortgage-result">
+          <!-- Result will appear here -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelector('.calculate-button').addEventListener('click', function () {
+      const applicants = parseInt(document.getElementById('applicants').value);
+      const salary = parseFloat(document.getElementById('combined-salary').value);
+      const deposit = parseFloat(document.getElementById('deposit').value);
+
+      const resultBox = document.getElementById('mortgage-result');
+
+      if (!applicants || !salary || deposit < 0 || applicants < 1) {
+        resultBox.innerHTML = '<p>Please fill in all fields with valid values.</p>';
+        return;
+      }
+
+      // Apply MSE-style borrowing multiplier
+      let multiplier = applicants === 1 ? 4.5 : 4.75;
+      let mortgage = salary * multiplier;
+      let totalBudget = mortgage + deposit;
+
+      const formatCurrency = value =>
+        '£' + Number(value).toLocaleString(undefined, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+
+      const message = `
+        <p>You could borrow up to <strong>${formatCurrency(mortgage)}</strong>.</p>
+        <p>With your deposit of ${formatCurrency(deposit)}, your total budget is <strong>${formatCurrency(totalBudget)}</strong>.</p>
+      `;
+
+      resultBox.innerHTML = message;
+    });
+  </script>
 </body>
 </html>
