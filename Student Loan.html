@@ -55,14 +55,7 @@
 
     <!-- Output Section -->
     <div class="box">
-      <div class="input-field">
-        <label for="total-repaid">Estimated Total Repayment (£)</label>
-        <input type="number" id="total-repaid" name="total-repaid" readonly placeholder="Auto-calculated" />
-      </div>
-      <div class="input-field">
-        <label for="remaining-balance">Remaining Loan Balance (£)</label>
-        <input type="number" id="remaining-balance" name="remaining-balance" readonly placeholder="Auto-calculated" />
-      </div>
+
       <div class="final-answer" id="final-answer-text">
         <p></p>
       </div>
@@ -102,8 +95,6 @@
         currentYear++;
       }
 
-      document.getElementById('total-repaid').value = totalRepaid.toFixed(2);
-      document.getElementById('remaining-balance').value = loanBalance.toFixed(2);
 
       const formatCurrency = value =>
         '£' + Number(value).toLocaleString(undefined, {
