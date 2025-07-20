@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GetYourWorm / Pension Calculator</title>
   <link rel="apple-touch-icon" sizes="180x180" href="Assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
-<link rel="manifest" href="Assets/site.webmanifest">
-
+  <link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
+  <link rel="manifest" href="Assets/site.webmanifest">
   <link rel="stylesheet" href="Style.CSS" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
@@ -62,10 +62,13 @@
       <div class="final-answer" id="final-answer-text">
         <p></p>
       </div>
+      <canvas id="pensionChart" style="margin-top: 2rem; max-width: 100%; height: 400px;"></canvas>
     </div>
   </div>
 
   <script>
+    let pensionChartInstance;
+
     document.querySelector('.calculate-button').addEventListener('click', function () {
       const age = parseInt(document.getElementById('age').value) || 0;
       const salaryInput = parseFloat(document.getElementById('salary').value) || 0;
@@ -83,10 +86,21 @@
       let yearsToContribute = retirementAge - age;
       let salary = salaryInput;
 
-      for (let i = 0; i < yearsToContribute; i++) {
-        const annualContribution = salary * contributionRate;
-        pension = (pension + annualContribution) * (1 + roi);
-        salary = salary * (1 + salaryGrowthRate);
+      // Arrays to hold data points for chart
+      const labels = [];
+      const salaryData = [];
+      const pensionData = [];
+
+      for (let i = 0; i <= yearsToContribute; i++) {
+        labels.push(age + i);
+        salaryData.push(salary);
+        pensionData.push(pension);
+
+        if (i < yearsToContribute) {
+          const annualContribution = salary * contributionRate;
+          pension = (pension + annualContribution) * (1 + roi);
+          salary = salary * (1 + salaryGrowthRate);
+        }
       }
 
       // Retirement income (simple annuity until age 100)
@@ -100,8 +114,63 @@
         <strong>£${annualIncome.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong> 
         per year in retirement.</p>
       `;
+
+      // Chart rendering
+      const ctx = document.getElementById('pensionChart').getContext('2d');
+      if (pensionChartInstance) pensionChartInstance.destroy();
+
+      pensionChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Salary (£)',
+              data: salaryData,
+              borderColor: '#7e57c2',
+              backgroundColor: 'rgba(126, 87, 194, 0.2)',
+              fill: true,
+              tension: 0.3,
+            },
+            {
+              label: 'Pension Pot (£)',
+              data: pensionData,
+              borderColor: '#d63384',
+              backgroundColor: 'rgba(214, 51, 132, 0.2)',
+              fill: true,
+              tension: 0.3,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#333' } },
+            title: {
+              display: true,
+              text: 'Salary and Pension Pot Growth Over Time',
+              color: '#333'
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Age', color: '#333' },
+              grid: { display: false },
+              ticks: { color: '#333' }
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: '£', color: '#333' },
+              grid: { display: false },
+              ticks: {
+                callback: val => '£' + val.toLocaleString(),
+                color: '#333'
+              }
+            }
+          }
+        }
+      });
     });
   </script>
 </body>
 </html>
-
