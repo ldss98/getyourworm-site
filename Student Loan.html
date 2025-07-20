@@ -4,12 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GetYourWorm / Student Loan Calculator</title>
-  <link rel="apple-touch-icon" sizes="180x180" href="Assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
-<link rel="manifest" href="Assets/site.webmanifest">
-
   <link rel="stylesheet" href="Style.CSS" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
@@ -24,49 +20,47 @@
   </header>
 
   <div class="student-input-aggregate">
-    <!-- Input Section -->
     <div class="box">
       <div class="input-field">
         <label for="student-debt">Total Student Debt (£)</label>
-        <input type="number" id="student-debt" name="student-debt" placeholder="e.g. 35000" />
+        <input type="number" id="student-debt" placeholder="e.g. 35000" />
       </div>
       <div class="input-field">
         <label for="years-graduated">Years Since Graduation</label>
-        <input type="number" id="years-graduated" name="years-graduated" placeholder="e.g. 2" />
+        <input type="number" id="years-graduated" placeholder="e.g. 2" />
       </div>
       <div class="input-field">
         <label for="current-salary">Current Salary (£)</label>
-        <input type="number" id="current-salary" name="current-salary" placeholder="e.g. 32000" />
+        <input type="number" id="current-salary" placeholder="e.g. 32000" />
       </div>
       <div class="input-field">
         <label for="annual-increases">Projected Annual Salary Increase (%)</label>
-        <input type="number" id="annual-increases" name="annual-increases" placeholder="e.g. 3" />
-      </div>      
+        <input type="number" id="annual-increases" placeholder="e.g. 3" />
+      </div>
       <div class="input-field">
         <label for="interest-rate">Assumed Annual Interest Rate on Loan (%)</label>
-        <input type="number" step="0.01" id="interest-rate" name="interest-rate" placeholder="e.g. 5.6" />
+        <input type="number" step="0.01" id="interest-rate" placeholder="e.g. 5.6" />
       </div>
       <div class="input-field">
         <label for="repayment-threshold">Repayment Threshold (£)*</label>
-        <input type="number" id="repayment-threshold" name="repayment-threshold" placeholder="e.g. 27295" value="27295" />
+        <input type="number" id="repayment-threshold" placeholder="e.g. 27295" value="27295" />
       </div>
       <button class="calculate-button">Calculate</button>
     </div>
 
-    <!-- Output Section -->
     <div class="box">
-
-      <div class="final-answer" id="final-answer-text">
-        <p></p>
-      </div>
+      <div class="final-answer" id="final-answer-text"></div>
+      <canvas id="loanChart" style="margin-top: 2rem; max-width: 100%; height: 400px;"></canvas>
     </div>
   </div>
 
   <p style="font-size: 0.8rem; color: #555; padding: 0 2rem;">
-    *Repayment threshold is the annual income above which you start repaying your student loan. Current Plan 2 threshold (2023/24) is £27,295.
+    *Repayment threshold is the annual income above which you start repaying your student loan.
   </p>
 
   <script>
+    let chartInstance;
+
     document.querySelector('.calculate-button').addEventListener('click', function () {
       const debt = parseFloat(document.getElementById('student-debt').value) || 0;
       const yearsGraduated = parseInt(document.getElementById('years-graduated').value) || 0;
@@ -76,40 +70,110 @@
       const repaymentThreshold = parseFloat(document.getElementById('repayment-threshold').value) || 0;
 
       if (debt <= 0 || salary <= 0 || repaymentThreshold <= 0) {
-        alert("Please enter positive numbers for debt, salary, and repayment threshold.");
+        alert("Please enter valid numbers.");
         return;
       }
 
       const maxYears = 30;
       let loanBalance = debt;
       let totalRepaid = 0;
-      let currentYear = yearsGraduated;
+      let year = 0;
 
-      while (currentYear < maxYears && loanBalance > 0) {
-        let incomeAboveThreshold = Math.max(0, salary - repaymentThreshold);
-        let repayment = Math.min(incomeAboveThreshold * 0.09, loanBalance);
-        let interest = loanBalance * (interestRatePercent / 100);
+      const labels = [];
+      const balanceData = [];
+      const repaidData = [];
+      const salaryData = [];
+
+      while (year < maxYears && loanBalance > 0) {
+        const displayYear = yearsGraduated + year;
+        labels.push(`Year ${displayYear}`);
+        balanceData.push(loanBalance);
+        repaidData.push(totalRepaid);
+        salaryData.push(salary);
+
+        const incomeAboveThreshold = Math.max(0, salary - repaymentThreshold);
+        const repayment = Math.min(incomeAboveThreshold * 0.09, loanBalance);
+        const interest = loanBalance * (interestRatePercent / 100);
         loanBalance = loanBalance + interest - repayment;
         totalRepaid += repayment;
         salary *= 1 + (annualIncreasePercent / 100);
-        currentYear++;
+        year++;
       }
 
+      const formatCurrency = val => '£' + val.toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-      const formatCurrency = value =>
-        '£' + Number(value).toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
+      document.getElementById('final-answer-text').innerHTML =
+        loanBalance <= 0
+          ? `🎉 Fully repaid in ${year + yearsGraduated} years. Total repaid: ${formatCurrency(totalRepaid)}`
+          : `Remaining after 30 years: ${formatCurrency(loanBalance)}. Total repaid: ${formatCurrency(totalRepaid)}`;
 
-      let message;
-      if (loanBalance <= 0) {
-        message = `Congratulations! Your loan would be fully repaid in ${currentYear} years, with a total repayment of ${formatCurrency(totalRepaid)}.`;
-      } else {
-        message = `After 30 years, your remaining balance would be approximately ${formatCurrency(loanBalance)} with total repayments of ${formatCurrency(totalRepaid)}.`;
-      }
+      const ctx = document.getElementById('loanChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
 
-      document.getElementById('final-answer-text').innerHTML = `<p>${message}</p>`;
+      const isDark = document.body.classList.contains('dark-mode');
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Loan Balance (£)',
+              data: balanceData,
+              borderColor: '#d63384',
+              backgroundColor: 'rgba(214, 51, 132, 0.2)',
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: 'Total Repaid (£)',
+              data: repaidData,
+              borderColor: '#b388eb',
+              backgroundColor: 'rgba(179, 136, 235, 0.2)',
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: 'Annual Salary (£)',
+              data: salaryData,
+              borderColor: '#7e57c2',
+              backgroundColor: 'rgba(126, 87, 194, 0.2)',
+              fill: true,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                color: isDark ? '#eee' : '#333'
+              }
+            },
+            title: {
+              display: true,
+              text: 'Student Loan Forecast Over Time',
+              color: isDark ? '#fff' : '#333'
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: isDark ? '#ccc' : '#333'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { display: false },
+              ticks: {
+                callback: val => '£' + val.toLocaleString(),
+                color: isDark ? '#ccc' : '#333'
+              }
+            }
+          }
+        }
+      });
     });
   </script>
 </body>
