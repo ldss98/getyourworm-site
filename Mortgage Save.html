@@ -9,6 +9,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
   <link rel="manifest" href="Assets/site.webmanifest">
   <link rel="stylesheet" href="Style.CSS" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
@@ -62,11 +63,14 @@
         <div class="final-answer" id="final-answer-text">
           <!-- Result will appear here -->
         </div>
+        <canvas id="depositChart" style="margin-top: 2rem; max-width: 100%; height: 400px;"></canvas>
       </div>
     </section>
   </main>
 
   <script>
+    let depositChartInstance;
+
     document.querySelector('.calculate-button').addEventListener('click', function () {
       const salary = parseFloat(document.getElementById('salary').value) || 0;
       const percentSaved = parseFloat(document.getElementById('percent-saved').value) || 0;
@@ -86,10 +90,17 @@
       let months = 0;
       let savings = currentSavings;
 
+      // Arrays to hold data for chart
+      const monthsData = [0];
+      const savingsData = [savings];
+
       while (savings < depositTarget && months < 1000) {
         savings += monthlyContribution;
         savings *= 1 + (interestRate / 100 / 12);
         months++;
+
+        monthsData.push(months);
+        savingsData.push(savings);
       }
 
       const years = Math.floor(months / 12);
@@ -112,6 +123,65 @@
       }
 
       document.getElementById('final-answer-text').innerHTML = `<p>${message}</p>`;
+
+      // Convert months to years for x-axis labels (with one decimal)
+      const labels = monthsData.map(m => (m / 12).toFixed(1));
+
+      // Chart rendering
+      const ctx = document.getElementById('depositChart').getContext('2d');
+      if (depositChartInstance) depositChartInstance.destroy();
+
+      depositChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Deposit Value (£)',
+            data: savingsData,
+            borderColor: '#d63384',
+            backgroundColor: 'rgba(214, 51, 132, 0.2)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+          },
+          {
+            label: 'Target Deposit',
+            data: new Array(labels.length).fill(depositTarget),
+            borderColor: '#7e57c2',
+            borderDash: [8, 6],
+            fill: false,
+            pointRadius: 0,
+            borderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#333' } },
+            title: {
+              display: true,
+              text: 'Deposit Savings Over Time (Years)',
+              color: '#333'
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Years', color: '#333' },
+              ticks: { color: '#333' },
+              grid: { display: false }
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: '£', color: '#333' },
+              ticks: {
+                callback: val => '£' + val.toLocaleString(),
+                color: '#333'
+              },
+              grid: { display: false }
+            }
+          }
+        }
+      });
     });
   </script>
 </body>
