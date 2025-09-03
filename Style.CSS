@@ -141,6 +141,7 @@ nav ul li a:hover {
 }
 
 .tool-box:hover {
+  background-color: #ffe4ec;
   animation: vibrate 0.5s linear;
 }
 
@@ -389,7 +390,7 @@ canvas {
   display: inline-block;
   width: 140px;   /* adjust size as needed */
   height: 140px;
-  background-image: url("../Assets/icon_student.jpg");
+  background-image: url("../Assets/icon_student.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -405,7 +406,7 @@ canvas {
   display: inline-block;
   width: 140px;   /* adjust size as needed */
   height: 140px;
-  background-image: url("../Assets/icon_pension.jpg");
+  background-image: url("../Assets/icon_pension.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -421,7 +422,7 @@ canvas {
   display: inline-block;
   width: 140px;   /* adjust size as needed */
   height: 140px;
-  background-image: url("../Assets/icon_mortgage.jpg");
+  background-image: url("../Assets/icon_mortgage.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -437,7 +438,7 @@ canvas {
   display: inline-block;
   width: 140px;    /* adjust size as needed */
   height: 140px;
-  background-image: url("../Assets/icon_deposit.jpg");
+  background-image: url("../Assets/icon_deposit.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
