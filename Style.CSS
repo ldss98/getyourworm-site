@@ -141,7 +141,6 @@ nav ul li a:hover {
 }
 
 .tool-box:hover {
-  background-color: #ffe4ec;
   animation: vibrate 0.5s linear;
 }
 
@@ -152,10 +151,10 @@ nav ul li a:hover {
 /* === Vibration Animation (used by both buttons and toolboxes) === */
 @keyframes vibrate {
   0% { transform: translateX(0); }
-  20% { transform: translateX(-2px); }
-  40% { transform: translateX(2px); }
-  60% { transform: translateX(-2px); }
-  80% { transform: translateX(2px); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
   100% { transform: translateX(0); }
 }
 
@@ -174,7 +173,6 @@ nav ul li a:hover {
   border-radius: 20px;
   color: #333;
 }
-
 
 .box {
   flex: 1 1 400px;
@@ -251,7 +249,6 @@ nav ul li a:hover {
 }
 
 /* About page */
-
 .about-container {
   max-width: 800px;
   margin: 60px auto;
@@ -330,7 +327,6 @@ nav ul li a:hover {
   margin-bottom: 1rem;
 }
 
-
 /* Progress bar */
 .progress-container {
   max-width: 900px;
@@ -381,4 +377,68 @@ canvas {
   font-family: 'Inter', Arial, sans-serif;
   font-size: 0.9rem;
   color: #333;
+}
+
+/* === Custom: Student Loan Button with Icon === */
+.tool-box.loan-btn {
+  gap: 12px; /* space between icon and text */
+}
+
+.tool-box.loan-btn::before {
+  content: "";
+  display: inline-block;
+  width: 140px;   /* adjust size as needed */
+  height: 140px;
+  background-image: url("icon_student.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* === Custom: Pension Button with Icon === */
+.tool-box.pension-btn {
+  gap: 12px; /* space between icon and text */
+}
+
+.tool-box.pension-btn::before {
+  content: "";
+  display: inline-block;
+  width: 140px;   /* adjust size as needed */
+  height: 140px;
+  background-image: url("icon_pension.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* === Custom: Mortgage Button with Icon === */
+.tool-box.mortgage-btn {
+  gap: 12px; /* space between icon and text */
+}
+
+.tool-box.mortgage-btn::before {
+  content: "";
+  display: inline-block;
+  width: 140px;   /* adjust size as needed */
+  height: 140px;
+  background-image: url("icon_mortgage.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* === Custom: Deposit Button with Icon === */
+.tool-box.deposit-btn {
+  gap: 12px; /* space between icon and text */
+}
+
+.tool-box.deposit-btn::before {
+  content: "";
+  display: inline-block;
+  width: 140px;   /* adjust size as needed */
+  height: 140px;
+  background-image: url("icon_deposit.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
