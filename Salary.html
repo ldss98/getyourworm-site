@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GetYourWorm / Take-Home Pay Calculator</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="Assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
+  <link rel="manifest" href="Assets/site.webmanifest">
+  <link rel="stylesheet" href="Style.CSS" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1><a href="Tools.html" class="nav-logo">GetYourWorm</a></h1>
+    <nav>
+      <ul>
+        <li><a href="Tools.html">Tools</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Terms.html">Terms</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="student-input-aggregate">
+    <div class="box">
+      <div class="input-field">
+        <label for="gross-salary">Annual Gross Salary (£)</label>
+        <input type="number" id="gross-salary" placeholder="e.g. 32000" />
+      </div>
+      <div class="input-field">
+        <label for="pension-percent">Pension Contribution (% of salary, via salary sacrifice)</label>
+        <input type="number" step="0.1" id="pension-percent" placeholder="e.g. 5" value="0" />
+      </div>
+      <div class="input-field checkbox-field">
+        <input type="checkbox" id="has-student-loan" />
+        <label for="has-student-loan">Repaying a Plan 2 student loan (9% over £27,295)</label>
+      </div>
+      <button class="calculate-button">Calculate</button>
+    </div>
+
+    <div class="box results-box">
+      <p class="results-eyebrow">Your results</p>
+      <div class="final-answer" id="final-answer-text"></div>
+      <ul class="result-breakdown" id="result-breakdown"></ul>
+      <div class="chart-card">
+        <canvas id="salaryChart" style="max-width: 100%; height: 300px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <p class="page-note">
+    *Estimates use 2025/26 England, Wales & Northern Ireland Income Tax and Class 1 National Insurance rates and thresholds. It doesn't account for Scottish tax bands, tax codes, benefits-in-kind, or other deductions, so treat it as a rough guide only.
+  </p>
+
+  <script>
+    let salaryChartInstance;
+
+    document.querySelector('.calculate-button').addEventListener('click', function () {
+      const grossSalary = parseFloat(document.getElementById('gross-salary').value) || 0;
+      const pensionPercent = parseFloat(document.getElementById('pension-percent').value) || 0;
+      const hasStudentLoan = document.getElementById('has-student-loan').checked;
+
+      if (grossSalary <= 0) {
+        alert("Please enter a valid salary.");
+        return;
+      }
+
+      const pensionContribution = grossSalary * (pensionPercent / 100);
+      const taxableIncome = Math.max(0, grossSalary - pensionContribution);
+
+      // Personal allowance, tapered above £100,000
+      let personalAllowance = 12570;
+      if (taxableIncome > 100000) {
+        personalAllowance = Math.max(0, 12570 - (taxableIncome - 100000) / 2);
+      }
+
+      const basicBandTop = 50270;
+      const higherBandTop = 125140;
+
+      let incomeTax = 0;
+      if (taxableIncome > personalAllowance) {
+        const basicPortion = Math.min(taxableIncome, basicBandTop) - personalAllowance;
+        if (basicPortion > 0) incomeTax += basicPortion * 0.20;
+      }
+      if (taxableIncome > basicBandTop) {
+        const higherPortion = Math.min(taxableIncome, higherBandTop) - basicBandTop;
+        incomeTax += higherPortion * 0.40;
+      }
+      if (taxableIncome > higherBandTop) {
+        incomeTax += (taxableIncome - higherBandTop) * 0.45;
+      }
+
+      // National Insurance (Class 1, employee)
+      const niPrimaryThreshold = 12570;
+      const niUpperLimit = 50270;
+      let nationalInsurance = 0;
+      if (taxableIncome > niPrimaryThreshold) {
+        const niBasic = Math.min(taxableIncome, niUpperLimit) - niPrimaryThreshold;
+        nationalInsurance += niBasic * 0.08;
+      }
+      if (taxableIncome > niUpperLimit) {
+        nationalInsurance += (taxableIncome - niUpperLimit) * 0.02;
+      }
+
+      // Student loan (Plan 2)
+      const studentLoanThreshold = 27295;
+      let studentLoanRepayment = 0;
+      if (hasStudentLoan && taxableIncome > studentLoanThreshold) {
+        studentLoanRepayment = (taxableIncome - studentLoanThreshold) * 0.09;
+      }
+
+      const takeHome = grossSalary - pensionContribution - incomeTax - nationalInsurance - studentLoanRepayment;
+      const monthlyTakeHome = takeHome / 12;
+
+      const formatCurrency = val => '£' + val.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+      document.getElementById('final-answer-text').innerHTML =
+        `<p>Your estimated take-home pay is <strong>${formatCurrency(takeHome)}</strong> per year (${formatCurrency(monthlyTakeHome)} per month).</p>`;
+
+      const breakdown = document.getElementById('result-breakdown');
+      breakdown.innerHTML = `
+        <li><span>Take-home pay</span><strong>${formatCurrency(takeHome)}</strong></li>
+        <li><span>Income Tax</span><strong>${formatCurrency(incomeTax)}</strong></li>
+        <li><span>National Insurance</span><strong>${formatCurrency(nationalInsurance)}</strong></li>
+        ${hasStudentLoan ? `<li><span>Student Loan</span><strong>${formatCurrency(studentLoanRepayment)}</strong></li>` : ''}
+        ${pensionPercent > 0 ? `<li><span>Pension Contribution</span><strong>${formatCurrency(pensionContribution)}</strong></li>` : ''}
+      `;
+
+      const ctx = document.getElementById('salaryChart').getContext('2d');
+      if (salaryChartInstance) salaryChartInstance.destroy();
+
+      const labels = ['Take-home pay', 'Income Tax', 'National Insurance'];
+      const data = [takeHome, incomeTax, nationalInsurance];
+      const colors = ['#ff4d9d', '#7e57c2', '#b388eb'];
+
+      if (hasStudentLoan) {
+        labels.push('Student Loan');
+        data.push(studentLoanRepayment);
+        colors.push('#ffa45c');
+      }
+      if (pensionPercent > 0) {
+        labels.push('Pension');
+        data.push(pensionContribution);
+        colors.push('#4fc3a1');
+      }
+
+      salaryChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#333' }
+            },
+            title: {
+              display: true,
+              text: 'Where your gross salary goes',
+              color: '#333'
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

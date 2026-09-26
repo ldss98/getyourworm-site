@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GetYourWorm / Mortgage Estimator</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="Assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
+  <link rel="manifest" href="Assets/site.webmanifest">
+  <link rel="stylesheet" href="Style.CSS" />
+</head>
+<body>
+  <header>
+    <h1><a href="Tools.html" class="nav-logo">GetYourWorm</a></h1>
+    <nav>
+      <ul>
+        <li><a href="Tools.html">Tools</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Terms.html">Terms</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="student-input-aggregate">
+      <div class="box">
+        <div class="input-field">
+          <label for="applicants">Number of People Applying</label>
+          <input type="number" id="applicants" placeholder="e.g., 1 or 2" min="1" />
+        </div>
+
+        <div class="input-field">
+          <label for="combined-salary">Combined Annual Salary (£)</label>
+          <input type="number" id="combined-salary" placeholder="e.g., 50000" />
+        </div>
+
+        <div class="input-field">
+          <label for="deposit">Combined Deposit (£)</label>
+          <input type="number" id="deposit" placeholder="e.g., 20000" />
+        </div>
+
+        <button class="calculate-button">Calculate</button>
+      </div>
+
+      <div class="box results-box">
+        <p class="results-eyebrow">Your results</p>
+        <div class="final-answer" id="mortgage-result">
+          <p>Fill in your details to see an estimate.</p>
+        </div>
+
+        <div class="chart-card" id="mortgage-visual-card" style="display:none;">
+          <p style="margin-bottom: 4px;">How much you could borrow</p>
+          <div class="range-visual">
+            <div class="range-visual-track" id="range-track">
+              <div class="range-visual-fill" id="range-fill"></div>
+              <div class="range-visual-marker marker-mid" id="range-marker-mid"></div>
+            </div>
+            <div class="range-visual-scale">
+              <span id="range-scale-low"></span>
+              <span id="range-scale-high"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p class="page-note">
+    *Lenders vary in how much they'll offer, typically between 4&times; and 5&times; combined income depending on affordability checks, credit history and outgoings. This is a rough guide, not a mortgage offer.
+  </p>
+
+  <script>
+    document.querySelector('.calculate-button').addEventListener('click', function () {
+      const applicants = parseInt(document.getElementById('applicants').value);
+      const salary = parseFloat(document.getElementById('combined-salary').value);
+      const deposit = parseFloat(document.getElementById('deposit').value);
+
+      const resultBox = document.getElementById('mortgage-result');
+      const visualCard = document.getElementById('mortgage-visual-card');
+
+      if (!applicants || !salary || deposit < 0 || applicants < 1) {
+        resultBox.innerHTML = '<p>Please fill in all fields with valid values.</p>';
+        visualCard.style.display = 'none';
+        return;
+      }
+
+      // Lender affordability multiples typically span a range rather than one fixed number
+      const multiplierLow = applicants === 1 ? 4.0 : 4.25;
+      const multiplierMid = applicants === 1 ? 4.5 : 4.75;
+      const multiplierHigh = applicants === 1 ? 5.0 : 5.25;
+
+      const mortgageLow = salary * multiplierLow;
+      const mortgageMid = salary * multiplierMid;
+      const mortgageHigh = salary * multiplierHigh;
+
+      const budgetLow = mortgageLow + deposit;
+      const budgetHigh = mortgageHigh + deposit;
+
+      const formatCurrency = value =>
+        '£' + Number(value).toLocaleString(undefined, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+
+      resultBox.innerHTML = `
+        <p>You could borrow between <strong>${formatCurrency(mortgageLow)}</strong> and <strong>${formatCurrency(mortgageHigh)}</strong> &mdash; most lenders would land around <strong>${formatCurrency(mortgageMid)}</strong>. With your deposit of ${formatCurrency(deposit)}, your total budget is likely between <strong>${formatCurrency(budgetLow)}</strong> and <strong>${formatCurrency(budgetHigh)}</strong>.</p>
+      `;
+
+      // Visual range bar: scale from 0 to a bit above the high estimate
+      const scaleMax = mortgageHigh * 1.15;
+      const lowPct = (mortgageLow / scaleMax) * 100;
+      const highPct = (mortgageHigh / scaleMax) * 100;
+      const midPct = (mortgageMid / scaleMax) * 100;
+
+      const fill = document.getElementById('range-fill');
+      fill.style.left = lowPct + '%';
+      fill.style.width = (highPct - lowPct) + '%';
+
+      const markerMid = document.getElementById('range-marker-mid');
+      markerMid.style.left = midPct + '%';
+      markerMid.setAttribute('data-label', formatCurrency(mortgageMid));
+
+      document.getElementById('range-scale-low').textContent = 'Low estimate: ' + formatCurrency(mortgageLow);
+      document.getElementById('range-scale-high').textContent = 'High estimate: ' + formatCurrency(mortgageHigh);
+
+      visualCard.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
