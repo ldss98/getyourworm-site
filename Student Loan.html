@@ -48,9 +48,12 @@
       <button class="calculate-button">Calculate</button>
     </div>
 
-    <div class="box">
+    <div class="box results-box">
+      <p class="results-eyebrow">Your results</p>
       <div class="final-answer" id="final-answer-text"></div>
-      <canvas id="loanChart" style="margin-top: 2rem; max-width: 100%; height: 400px;"></canvas>
+      <div class="chart-card">
+        <canvas id="loanChart" style="max-width: 100%; height: 360px;"></canvas>
+      </div>
     </div>
   </div>
 
@@ -104,8 +107,8 @@
 
       document.getElementById('final-answer-text').innerHTML =
         loanBalance <= 0
-          ? `🎉 Fully repaid in ${year + yearsGraduated} years. Total repaid: ${formatCurrency(totalRepaid)}`
-          : `Remaining after 30 years: ${formatCurrency(loanBalance)}. Total repaid: ${formatCurrency(totalRepaid)}`;
+          ? `<p>🎉 Your loan will clear in <strong>${year + yearsGraduated} years</strong>, after you've paid <strong>${formatCurrency(totalRepaid)}</strong>.</p>`
+          : `<p>You'll pay <strong>${formatCurrency(totalRepaid)}</strong> over 30 years, after which your loan will be written off.</p>`;
 
       const ctx = document.getElementById('loanChart').getContext('2d');
       if (chartInstance) chartInstance.destroy();

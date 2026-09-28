@@ -43,13 +43,32 @@
         <button class="calculate-button">Calculate</button>
       </div>
 
-      <div class="box">
+      <div class="box results-box">
+        <p class="results-eyebrow">Your results</p>
         <div class="final-answer" id="mortgage-result">
-          <!-- Result will appear here -->
+          <p>Fill in your details to see an estimate.</p>
+        </div>
+
+        <div class="chart-card" id="mortgage-visual-card" style="display:none;">
+          <p style="margin-bottom: 4px;">How much you could borrow</p>
+          <div class="range-visual">
+            <div class="range-visual-track" id="range-track">
+              <div class="range-visual-fill" id="range-fill"></div>
+              <div class="range-visual-marker marker-mid" id="range-marker-mid"></div>
+            </div>
+            <div class="range-visual-scale">
+              <span id="range-scale-low"></span>
+              <span id="range-scale-high"></span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   </main>
+
+  <p class="page-note">
+    *Lenders vary in how much they'll offer, typically between 4&times; and 5&times; combined income depending on affordability checks, credit history and outgoings. This is a rough guide, not a mortgage offer.
+  </p>
 
   <script>
     document.querySelector('.calculate-button').addEventListener('click', function () {
@@ -58,16 +77,25 @@
       const deposit = parseFloat(document.getElementById('deposit').value);
 
       const resultBox = document.getElementById('mortgage-result');
+      const visualCard = document.getElementById('mortgage-visual-card');
 
       if (!applicants || !salary || deposit < 0 || applicants < 1) {
         resultBox.innerHTML = '<p>Please fill in all fields with valid values.</p>';
+        visualCard.style.display = 'none';
         return;
       }
 
-      // Apply MSE-style borrowing multiplier
-      let multiplier = applicants === 1 ? 4.5 : 4.75;
-      let mortgage = salary * multiplier;
-      let totalBudget = mortgage + deposit;
+      // Lender affordability multiples typically span a range rather than one fixed number
+      const multiplierLow = applicants === 1 ? 4.0 : 4.25;
+      const multiplierMid = applicants === 1 ? 4.5 : 4.75;
+      const multiplierHigh = applicants === 1 ? 5.0 : 5.25;
+
+      const mortgageLow = salary * multiplierLow;
+      const mortgageMid = salary * multiplierMid;
+      const mortgageHigh = salary * multiplierHigh;
+
+      const budgetLow = mortgageLow + deposit;
+      const budgetHigh = mortgageHigh + deposit;
 
       const formatCurrency = value =>
         '£' + Number(value).toLocaleString(undefined, {
@@ -75,12 +103,28 @@
           maximumFractionDigits: 0
         });
 
-      const message = `
-        <p>You could borrow up to <strong>${formatCurrency(mortgage)}</strong>.</p>
-        <p>With your deposit of ${formatCurrency(deposit)}, your total budget is <strong>${formatCurrency(totalBudget)}</strong>.</p>
+      resultBox.innerHTML = `
+        <p>You could borrow between <strong>${formatCurrency(mortgageLow)}</strong> and <strong>${formatCurrency(mortgageHigh)}</strong> &mdash; most lenders would land around <strong>${formatCurrency(mortgageMid)}</strong>. With your deposit of ${formatCurrency(deposit)}, your total budget is likely between <strong>${formatCurrency(budgetLow)}</strong> and <strong>${formatCurrency(budgetHigh)}</strong>.</p>
       `;
 
-      resultBox.innerHTML = message;
+      // Visual range bar: scale from 0 to a bit above the high estimate
+      const scaleMax = mortgageHigh * 1.15;
+      const lowPct = (mortgageLow / scaleMax) * 100;
+      const highPct = (mortgageHigh / scaleMax) * 100;
+      const midPct = (mortgageMid / scaleMax) * 100;
+
+      const fill = document.getElementById('range-fill');
+      fill.style.left = lowPct + '%';
+      fill.style.width = (highPct - lowPct) + '%';
+
+      const markerMid = document.getElementById('range-marker-mid');
+      markerMid.style.left = midPct + '%';
+      markerMid.setAttribute('data-label', formatCurrency(mortgageMid));
+
+      document.getElementById('range-scale-low').textContent = 'Low estimate: ' + formatCurrency(mortgageLow);
+      document.getElementById('range-scale-high').textContent = 'High estimate: ' + formatCurrency(mortgageHigh);
+
+      visualCard.style.display = 'block';
     });
   </script>
 </body>

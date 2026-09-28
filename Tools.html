@@ -15,18 +15,94 @@
     <h1><a href="Tools.html" class="nav-logo">GetYourWorm</a></h1>
     <nav>
       <ul>
-        <li><a href="Tools.html">Tools</a></li>
+        <li><a href="Tools.html" class="active">Tools</a></li>
         <li><a href="About.html">About</a></li>
         <li><a href="Terms.html">Terms</a></li>
       </ul>
     </nav>
   </header>
 
+  <div class="tools-header">
+    <h2>Pick a tool</h2>
+    <p>Six free calculators to help you plan the big financial milestones of your 20s.</p>
+  </div>
+
   <main class="container tools-container">
-    <a href="Student Loan.html" class="tool-box loan-btn">Paying off student loans</a>
-    <a href="Mortgage Save.html" class="tool-box deposit-btn">Saving for a deposit</a>
-    <a href="Pension.html" class="tool-box pension-btn">Contributing to your pension</a>
-    <a href="Mortgage Borrow.html" class="tool-box mortgage-btn">Getting a mortgage</a>
+    <a href="Student Loan.html" class="tool-card">
+      <span class="tool-icon tool-icon-flat">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 18L56 28 32 38 8 28 32 18Z" stroke-width="3" stroke-linejoin="round" />
+          <path d="M20 32v9c0 3.5 5.5 7 12 7s12-3.5 12-7v-9" stroke-width="3" stroke-linejoin="round" />
+          <path d="M52 28v12" stroke-width="3" stroke-linecap="round" />
+        </svg>
+      </span>
+      <span class="tool-title">Paying off student loans</span>
+      <span class="tool-desc">See how long until your loan clears based on salary and growth</span>
+    </a>
+
+    <a href="Mortgage Save.html" class="tool-card">
+      <span class="tool-icon tool-icon-flat">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 32c0-5 8-9 19-9s19 4 19 9v11c0 6-5 11-11 11H24c-6 0-11-5-11-11V32Z" stroke-width="3" stroke-linejoin="round" />
+          <path d="M21 24c0-7 5-13 11-13s11 6 11 13" stroke-width="3" stroke-linecap="round" />
+          <circle cx="32" cy="32" r="3.2" stroke-width="2.4" />
+        </svg>
+      </span>
+      <span class="tool-title">Saving for a deposit</span>
+      <span class="tool-desc">Work out how long it'll take to hit your house deposit target</span>
+    </a>
+
+    <a href="Pension.html" class="tool-card">
+      <span class="tool-icon tool-icon-flat">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 48V32" stroke-width="3" stroke-linecap="round" />
+          <path d="M32 32C20 30 14 22 16 14C24 18 30 24 32 32Z" stroke-width="2.6" stroke-linejoin="round" />
+          <path d="M32 32Q24 24 16 14" stroke-width="2" stroke-linecap="round" />
+          <path d="M32 32C44 30 50 22 48 14C40 18 34 24 32 32Z" stroke-width="2.6" stroke-linejoin="round" />
+          <path d="M32 32Q40 24 48 14" stroke-width="2" stroke-linecap="round" />
+          <path d="M18 48h28" stroke-width="3" stroke-linecap="round" />
+        </svg>
+      </span>
+      <span class="tool-title">Contributing to your pension</span>
+      <span class="tool-desc">Project your pension pot and retirement income over time</span>
+    </a>
+
+    <a href="Mortgage Borrow.html" class="tool-card">
+      <span class="tool-icon tool-icon-flat">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 30L32 12l22 18" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M16 27v21a2 2 0 0 0 2 2h28a2 2 0 0 0 2 -2V27" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+          <path d="M26 50V36h12v14" stroke-width="3" stroke-linejoin="round" />
+        </svg>
+      </span>
+      <span class="tool-title">Getting a mortgage</span>
+      <span class="tool-desc">Estimate how much you could borrow based on your income</span>
+    </a>
+
+    <a href="Salary.html" class="tool-card">
+      <span class="tool-icon tool-icon-flat">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(31 28) scale(1.5) translate(-31 -28)">
+            <path d="M24 40h16" stroke-width="3" stroke-linecap="round" />
+            <path d="M21 32h15" stroke-width="3" stroke-linecap="round" />
+            <path d="M26 40V23c0-4.5 3.5-7 7.5-7c3 0 5.5 1.2 7 3.4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          </g>
+        </svg>
+      </span>
+      <span class="tool-title">Working out your take-home pay</span>
+      <span class="tool-desc">Estimate your salary after tax, National Insurance and deductions</span>
+    </a>
+
+    <a href="Savings.html" class="tool-card">
+      <span class="tool-icon tool-icon-flat">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 48L24 34L34 42L54 16" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M42 16H54V28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+      <span class="tool-title">Growing your savings</span>
+      <span class="tool-desc">See how compound growth builds your savings or investments</span>
+    </a>
   </main>
 </body>
 </html>

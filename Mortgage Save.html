@@ -59,11 +59,14 @@
         <button class="calculate-button">Calculate</button>
       </div>
 
-      <div class="box">
+      <div class="box results-box">
+        <p class="results-eyebrow">Your results</p>
         <div class="final-answer" id="final-answer-text">
           <!-- Result will appear here -->
         </div>
-        <canvas id="depositChart" style="margin-top: 2rem; max-width: 100%; height: 400px;"></canvas>
+        <div class="chart-card">
+          <canvas id="depositChart" style="max-width: 100%; height: 360px;"></canvas>
+        </div>
       </div>
     </section>
   </main>
@@ -117,9 +120,9 @@
         const yearStr = years === 1 ? '1 year' : `${years} years`;
         const monthStr = remainingMonths === 1 ? '1 month' : `${remainingMonths} months`;
         const andStr = (years > 0 && remainingMonths > 0) ? ' and ' : '';
-        message = `With the inputted values, you should hit your target deposit of ${formatCurrency(depositTarget)} in approximately ${yearStr}${andStr}${remainingMonths > 0 ? monthStr : ''}.`;
+        message = `You'll hit your target deposit of <strong>${formatCurrency(depositTarget)}</strong> in around <strong>${yearStr}${andStr}${remainingMonths > 0 ? monthStr : ''}</strong>.`;
       } else {
-        message = `With your current savings and saving rate, reaching your target deposit seems unlikely within a reasonable time frame.`;
+        message = `At this rate, your target deposit of <strong>${formatCurrency(depositTarget)}</strong> isn't reachable within a realistic time frame &mdash; try increasing your savings rate.`;
       }
 
       document.getElementById('final-answer-text').innerHTML = `<p>${message}</p>`;

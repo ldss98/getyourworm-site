@@ -58,11 +58,14 @@
     </div>
 
     <!-- Output Section -->
-    <div class="box">
+    <div class="box results-box">
+      <p class="results-eyebrow">Your results</p>
       <div class="final-answer" id="final-answer-text">
         <p></p>
       </div>
-      <canvas id="pensionChart" style="margin-top: 2rem; max-width: 100%; height: 400px;"></canvas>
+      <div class="chart-card">
+        <canvas id="pensionChart" style="max-width: 100%; height: 360px;"></canvas>
+      </div>
     </div>
   </div>
 
@@ -108,11 +111,7 @@
       const annualIncome = pension / retirementYears;
 
       document.getElementById('final-answer-text').innerHTML = `
-        <p>By age ${retirementAge}, your pension pot could be worth 
-        <strong>£${pension.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>.<br><br>
-        If you live until age 100, this gives you around 
-        <strong>£${annualIncome.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong> 
-        per year in retirement.</p>
+        <p>By age ${retirementAge}, your pension pot could be worth <strong>£${pension.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}</strong>. If you live until 100, that's around <strong>£${annualIncome.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}</strong> per year in retirement.</p>
       `;
 
       // Chart rendering

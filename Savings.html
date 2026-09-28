@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GetYourWorm / Savings & Investment Growth Calculator</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="Assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="Assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Assets/favicon-16x16.png">
+  <link rel="manifest" href="Assets/site.webmanifest">
+  <link rel="stylesheet" href="Style.CSS" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1><a href="Tools.html" class="nav-logo">GetYourWorm</a></h1>
+    <nav>
+      <ul>
+        <li><a href="Tools.html">Tools</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Terms.html">Terms</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="student-input-aggregate">
+    <div class="box">
+      <div class="input-field">
+        <label for="start-balance">Starting Balance (£)</label>
+        <input type="number" id="start-balance" placeholder="e.g. 2000" value="0" />
+      </div>
+      <div class="input-field">
+        <label for="monthly-contribution">Monthly Contribution (£)</label>
+        <input type="number" id="monthly-contribution" placeholder="e.g. 200" />
+      </div>
+      <div class="input-field">
+        <label for="annual-return">Expected Annual Return (%)</label>
+        <input type="number" step="0.1" id="annual-return" placeholder="e.g. 6" />
+      </div>
+      <div class="input-field">
+        <label for="contribution-increase">Annual Contribution Increase (%)</label>
+        <input type="number" step="0.1" id="contribution-increase" placeholder="e.g. 3" value="0" />
+      </div>
+      <div class="input-field">
+        <label for="years">Number of Years</label>
+        <input type="number" id="years" placeholder="e.g. 10" />
+      </div>
+      <button class="calculate-button">Calculate</button>
+    </div>
+
+    <div class="box results-box">
+      <p class="results-eyebrow">Your results</p>
+      <div class="final-answer" id="final-answer-text"></div>
+      <div class="chart-card">
+        <canvas id="savingsChart" style="max-width: 100%; height: 360px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <p class="page-note">
+    *Assumes returns compound monthly at a constant rate and contributions are made at the end of each month. Real-world investment returns vary and aren't guaranteed &mdash; this is a projection, not a promise.
+  </p>
+
+  <script>
+    let savingsChartInstance;
+
+    document.querySelector('.calculate-button').addEventListener('click', function () {
+      const startBalance = parseFloat(document.getElementById('start-balance').value) || 0;
+      let monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value) || 0;
+      const annualReturnPercent = parseFloat(document.getElementById('annual-return').value) || 0;
+      const contributionIncreasePercent = parseFloat(document.getElementById('contribution-increase').value) || 0;
+      const years = parseInt(document.getElementById('years').value) || 0;
+
+      if (years <= 0 || (startBalance <= 0 && monthlyContribution <= 0)) {
+        alert("Please enter valid numbers.");
+        return;
+      }
+
+      const monthlyReturn = Math.pow(1 + annualReturnPercent / 100, 1 / 12) - 1;
+
+      let balance = startBalance;
+      let totalContributed = startBalance;
+
+      const labels = [];
+      const balanceData = [];
+      const contributedData = [];
+
+      labels.push(0);
+      balanceData.push(balance);
+      contributedData.push(totalContributed);
+
+      for (let year = 1; year <= years; year++) {
+        for (let month = 0; month < 12; month++) {
+          balance += monthlyContribution;
+          totalContributed += monthlyContribution;
+          balance *= 1 + monthlyReturn;
+        }
+        labels.push(year);
+        balanceData.push(balance);
+        contributedData.push(totalContributed);
+        monthlyContribution *= 1 + (contributionIncreasePercent / 100);
+      }
+
+      const totalGrowth = balance - totalContributed;
+
+      const formatCurrency = val => '£' + val.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+      document.getElementById('final-answer-text').innerHTML =
+        `<p>After ${years} year${years === 1 ? '' : 's'}, your savings could grow to <strong>${formatCurrency(balance)}</strong>. You'll have contributed ${formatCurrency(totalContributed)} yourself, with <strong>${formatCurrency(totalGrowth)}</strong> from investment growth.</p>`;
+
+      const ctx = document.getElementById('savingsChart').getContext('2d');
+      if (savingsChartInstance) savingsChartInstance.destroy();
+
+      savingsChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels.map(y => `Year ${y}`),
+          datasets: [
+            {
+              label: 'Total Balance (£)',
+              data: balanceData,
+              borderColor: '#ff4d9d',
+              backgroundColor: 'rgba(255, 77, 157, 0.15)',
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: 'Total Contributed (£)',
+              data: contributedData,
+              borderColor: '#7e57c2',
+              backgroundColor: 'rgba(126, 87, 194, 0.12)',
+              fill: true,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#333' } },
+            title: {
+              display: true,
+              text: 'Savings Growth Over Time',
+              color: '#333'
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#333' }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { display: false },
+              ticks: {
+                callback: val => '£' + val.toLocaleString(),
+                color: '#333'
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
